@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\rtklib_2.4.3\RTKLIB-rtklib_2.4.3\src\rtkcmn.c" />
     <ClCompile Include="rnx2rtkp.c" />
+    <ClCompile Include="rtkcmn.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rtklib.h" />

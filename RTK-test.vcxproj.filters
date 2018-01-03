@@ -18,7 +18,7 @@
     <ClCompile Include="rnx2rtkp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\rtklib_2.4.3\RTKLIB-rtklib_2.4.3\src\rtkcmn.c">
+    <ClCompile Include="rtkcmn.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -72,24 +72,24 @@ static const char *help[]={
 " -y level  output soltion status (0:off,1:states,2:residuals) [0]",
 " -x level  debug trace level (0:off) [0]"
 };
-/* show message --------------------------------------------------------------*/
-extern int showmsg(char *format, ...)
-{
-    va_list arg;
-    va_start(arg,format); vfprintf(stderr,format,arg); va_end(arg);
-    fprintf(stderr,"\r");
-    return 0;
-}
-extern void settspan(gtime_t ts, gtime_t te) {}
-extern void settime(gtime_t time) {}
-
-/* print help ----------------------------------------------------------------*/
-static void printhelp(void)
-{
-    int i;
-    for (i=0;i<(int)(sizeof(help)/sizeof(*help));i++) fprintf(stderr,"%s\n",help[i]);
-    exit(0);
-}
+///* show message --------------------------------------------------------------*/
+//extern int showmsg(char *format, ...)
+//{
+//    va_list arg;
+//    va_start(arg,format); vfprintf(stderr,format,arg); va_end(arg);
+//    fprintf(stderr,"\r");
+//    return 0;
+//}
+//extern void settspan(gtime_t ts, gtime_t te) {}
+//extern void settime(gtime_t time) {}
+//
+///* print help ----------------------------------------------------------------*/
+//static void printhelp(void)
+//{
+//    int i;
+//    for (i=0;i<(int)(sizeof(help)/sizeof(*help));i++) fprintf(stderr,"%s\n",help[i]);
+//    exit(0);
+//}
 /* rnx2rtkp main -------------------------------------------------------------*/
 int main(int argc, char **argv)
 {
