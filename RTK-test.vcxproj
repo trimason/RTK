@@ -21,6 +21,9 @@
   <ItemGroup>
     <ClCompile Include="rnx2rtkp.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rtklib.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5EAC9352-D861-4B6D-AE3C-009254A48056}</ProjectGuid>

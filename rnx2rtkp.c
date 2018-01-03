@@ -18,7 +18,7 @@
 *           2016/09/07  1.10 add option -sys
 *-----------------------------------------------------------------------------*/
 #include <stdarg.h>
-#include <rtklib.h>
+#include "rtklib.h"
 
 #define PROGNAME    "rnx2rtkp"          /* program name */
 #define MAXFILE     16                  /* max number of input files */
