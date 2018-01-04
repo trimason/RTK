@@ -74,11 +74,15 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -117,8 +121,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\convkml.c" />
+    <ClCompile Include="..\src\datum.c" />
+    <ClCompile Include="..\src\download.c" />
+    <ClCompile Include="..\src\ephemeris.c" />
+    <ClCompile Include="..\src\geoid.c" />
+    <ClCompile Include="..\src\ionex.c" />
+    <ClCompile Include="..\src\lambda.c" />
     <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\options.c" />
+    <ClCompile Include="..\src\pntpos.c" />
+    <ClCompile Include="..\src\postpos.c" />
+    <ClCompile Include="..\src\ppp.c" />
+    <ClCompile Include="..\src\ppp_ar.c" />
+    <ClCompile Include="..\src\ppp_corr.c" />
+    <ClCompile Include="..\src\preceph.c" />
+    <ClCompile Include="..\src\qzslex.c" />
+    <ClCompile Include="..\src\rinex.c" />
+    <ClCompile Include="..\src\rtcm.c" />
+    <ClCompile Include="..\src\rtcm2.c" />
+    <ClCompile Include="..\src\rtcm3.c" />
+    <ClCompile Include="..\src\rtcm3e.c" />
     <ClCompile Include="..\src\rtkcmn.c" />
+    <ClCompile Include="..\src\rtkpos.c" />
+    <ClCompile Include="..\src\sbas.c" />
+    <ClCompile Include="..\src\solution.c" />
+    <ClCompile Include="..\src\tides.c" />
+    <ClCompile Include="..\src\tle.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\rtklib.h" />
