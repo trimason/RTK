@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\rnx2rtkp.c">
+    <ClCompile Include="..\src\rtkcmn.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\rtkcmn.c">
+    <ClCompile Include="..\src\main.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

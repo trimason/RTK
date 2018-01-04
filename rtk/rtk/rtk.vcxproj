@@ -117,7 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\rnx2rtkp.c" />
+    <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\rtkcmn.c" />
   </ItemGroup>
   <ItemGroup>
