@@ -944,6 +944,8 @@ static void set_index(double ver, int sys, const char *opt,
 #endif
 }
 /* read rinex obs data body --------------------------------------------------*/
+//该函数将所需类型的卫星的时间和位置信息记录在data结构体对象中，n表示记录了几个卫星，i表示一个时间段内总共有几个卫星
+//tobs反应了记录哪个系统，这个系统的波段有哪些，index反应tobs的记录情况
 static int readrnxobsb(FILE *fp, const char *opt, double ver, int *tsys,
                        char tobs[][MAXOBSTYPE][4], int *flag, obsd_t *data,
                        sta_t *sta)
@@ -957,7 +959,7 @@ static int readrnxobsb(FILE *fp, const char *opt, double ver, int *tsys,
     mask=set_sysmask(opt);
     
     /* set signal index */
-    set_index(ver,SYS_GPS,opt,tobs[0],index  );
+    set_index(ver,SYS_GPS,opt,tobs[0],index  ); //反馈到tobs记录哪个系统被选上了，选择哪个系统频段，index显示tobs这个序号项被选中
     set_index(ver,SYS_GLO,opt,tobs[1],index+1);
     set_index(ver,SYS_GAL,opt,tobs[2],index+2);
     set_index(ver,SYS_QZS,opt,tobs[3],index+3);
@@ -980,7 +982,7 @@ static int readrnxobsb(FILE *fp, const char *opt, double ver, int *tsys,
             data[n].sat=(unsigned char)sats[i-1];
             
             /* decode obs data */
-            if (decode_obsdata(fp,buff,ver,mask,index,data+n)&&n<MAXOBS) n++;
+            if (decode_obsdata(fp,buff,ver,mask,index,data+n)&&n<MAXOBS) n++;//选择记录几个卫星个数，反馈给n，单站单差仅记录G开头的卫星共12个
         }
         else if (*flag==3||*flag==4) { /* new site or header info follows */
             
@@ -1022,13 +1024,13 @@ static int readrnxobs(FILE *fp, gtime_t ts, gtime_t te, double tint,
         
         for (i=0;i<n;i++) {
             
-            /* restore cycle-slip */
+            /* restore cycle-slip */	
             restslips(slips,data+i);
             
             data[i].rcv=(unsigned char)rcv;
             
             /* save obs data */
-            if ((stat=addobsdata(obs,data+i))<0) break;
+            if ((stat=addobsdata(obs,data+i))<0) break;  //将data数据保存在obs上
         }
     }
     trace(4,"readrnxobs: nobs=%d stat=%d\n",obs->n,stat);
@@ -1451,7 +1453,7 @@ static int readrnxfp(FILE *fp, gtime_t ts, gtime_t te, double tint,
     trace(3,"readrnxfp: flag=%d index=%d\n",flag,index);
     
     /* read rinex header */
-    if (!readrnxh(fp,&ver,type,&sys,&tsys,tobs,nav,sta)) return 0;
+    if (!readrnxh(fp,&ver,type,&sys,&tsys,tobs,nav,sta)) return 0; //此处修改了type，根据rinex文件性质设置type是什么
     
     /* flag=0:except for clock,1:clock */
     if ((!flag&&*type=='C')||(flag&&*type!='C')) return 0;
@@ -1459,8 +1461,8 @@ static int readrnxfp(FILE *fp, gtime_t ts, gtime_t te, double tint,
     /* read rinex body */
     switch (*type) {
         case 'O': return readrnxobs(fp,ts,te,tint,opt,index,ver,&tsys,tobs,obs,
-                                    sta);
-        case 'N': return readrnxnav(fp,opt,ver,sys    ,nav);
+                                    sta);//说明该rinex文件是观测信息，obs文件
+        case 'N': return readrnxnav(fp,opt,ver,sys    ,nav); //说明该rinex文件是导航星历文件，nav
         case 'G': return readrnxnav(fp,opt,ver,SYS_GLO,nav);
         case 'H': return readrnxnav(fp,opt,ver,SYS_SBS,nav);
         case 'J': return readrnxnav(fp,opt,ver,SYS_QZS,nav); /* extension */

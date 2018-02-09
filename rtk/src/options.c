@@ -308,7 +308,7 @@ extern int opt2buf(const opt_t *opt, char *buff)
 *                              (terminated with table[i].name="")
 * return : status (1:ok,0:error)
 *-----------------------------------------------------------------------------*/
-extern int loadopts(const char *file, opt_t *opts)
+extern int loadopts(const char *file, opt_t *opts)//该函数造成的结果是根据conf文件设置情况，修改了opts的预制好的参数值
 {
     FILE *fp;
     opt_t *opt;
@@ -321,20 +321,21 @@ extern int loadopts(const char *file, opt_t *opts)
         trace(1,"loadopts: options file open error (%s)\n",file);
         return 0;
     }
+	/*将conf文件逐行读取，并将每行的软件设置选项以name、format、var和comment四种变量保存在结构体对象opts中*/
     while (fgets(buff,sizeof(buff),fp)) {
         n++;
-        chop(buff);
+        chop(buff);//chop函数是消除字符串中特定字符，并以'\0'替代
         
-        if (buff[0]=='\0') continue;
-        
+        if (buff[0]=='\0') continue;//当读取的是文件头时，直接读下一行
+        //没有=意味着，该conf文件没有设置任何参数，是无效的
         if (!(p=strstr(buff,"="))) {
             fprintf(stderr,"invalid option %s (%s:%d)\n",buff,file,n);
             continue;
         }
-        *p++='\0';
+        *p++='\0';//找到=出现的那个位置，将=改为'\0'，并且字符串地址加1
         chop(buff);
-        if (!(opt=searchopt(buff,opts))) continue;
-        
+        if (!(opt=searchopt(buff,opts))) continue;//返回opts中设置好的参数结构体对象列表中，与buff对应的那个对象，将该对象数值赋值于opt
+        //根据conf文件的参数，将buff中p指针所指向的该项目参数，赋值给刚才在opts列表中找到的对应存储类型opt上
         if (!str2opt(opt,p)) {
             fprintf(stderr,"invalid option value %s (%s:%d)\n",buff,file,n);
             continue;

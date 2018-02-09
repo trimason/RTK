@@ -93,32 +93,39 @@ static void printhelp(void)
 /* rnx2rtkp main -------------------------------------------------------------*/
 int main(int argc, char **argv)
 {
-    prcopt_t prcopt=prcopt_default;
-    solopt_t solopt=solopt_default;
-    filopt_t filopt={""};
-    gtime_t ts={0},te={0};
+	/*for (int count = 0; count < argc; count++)
+	{
+		printf("%d: %s\n", count, argv[count]);
+	}*/
+	
+	prcopt_t prcopt=prcopt_default;   //默认处理选项类型
+    solopt_t solopt=solopt_default;   //默认解算选项类型
+    filopt_t filopt={""};			  //文件选项类型
+    gtime_t ts={0},te={0};			  //时间结构体
     double tint=0.0,es[]={2000,1,1,0,0,0},ee[]={2000,12,31,23,59,59},pos[3];
     int i,j,n,ret;
     char *infile[MAXFILE],*outfile="",*p;
     
-    prcopt.mode  =PMODE_KINEMA;
-    prcopt.navsys=0;
-    prcopt.refpos=1;
-    prcopt.glomodear=1;
-    solopt.timef=0;
+    prcopt.mode  =PMODE_KINEMA;       //kinematic定位
+    prcopt.navsys=0;                  //navigation system
+    prcopt.refpos=1;                  //base position for relative mode
+    prcopt.glomodear=1;               //GLONASS AR mode
+    solopt.timef=0;                   //time format (0:sssss.s,1:yyyy/mm/dd hh:mm:ss.s)
     sprintf(solopt.prog ,"%s ver.%s %s",PROGNAME,VER_RTKLIB,PATCH_LEVEL);
     sprintf(filopt.trace,"%s.trace",PROGNAME);
     
     /* load options from configuration file */
     for (i=1;i<argc;i++) {
-        if (!strcmp(argv[i],"-k")&&i+1<argc) {
+        if (!strcmp(argv[i],"-k")&&i+1<argc) {            //如果可以读取设置文件
             resetsysopts();
-            if (!loadopts(argv[++i],sysopts)) return -1;
-            getsysopts(&prcopt,&solopt,&filopt);
+            if (!loadopts(argv[++i],sysopts)) return -1;  //这一步骤中载入rtk软件设置的conf文件，并将数值修改至sysopts中
+            getsysopts(&prcopt,&solopt,&filopt);          //获取上一步骤中取得的sysopts数值，储存在三个结构体中
+			                                              //差分中只涉及前两个结构体，通过这一步，认为prcopt和solopt设置完毕
         }
     }
+	//不断循环读取argc，将设置情况存储在字符串中，通过这个步骤，知道输入文件都有哪几个了
     for (i=1,n=0;i<argc;i++) {
-        if      (!strcmp(argv[i],"-o")&&i+1<argc) outfile=argv[++i];
+        if      (!strcmp(argv[i],"-o")&&i+1<argc) outfile=argv[++i];//将结果输出文件名储存在outfile中
         else if (!strcmp(argv[i],"-ts")&&i+2<argc) {
             sscanf(argv[++i],"%lf/%lf/%lf",es,es+1,es+2);
             sscanf(argv[++i],"%lf:%lf:%lf",es+3,es+4,es+5);
@@ -175,7 +182,7 @@ int main(int argc, char **argv)
         else if (!strcmp(argv[i],"-y")&&i+1<argc) solopt.sstat=atoi(argv[++i]);
         else if (!strcmp(argv[i],"-x")&&i+1<argc) solopt.trace=atoi(argv[++i]);
         else if (*argv[i]=='-') printhelp();
-        else if (n<MAXFILE) infile[n++]=argv[i];
+        else if (n<MAXFILE) infile[n++]=argv[i];//通过逐步读取argv，将接收机，基站观测量和接收机星历文件名储存在infile中
     }
     if (!prcopt.navsys) {
         prcopt.navsys=SYS_GPS|SYS_GLO;
@@ -184,6 +191,7 @@ int main(int argc, char **argv)
         showmsg("error : no input file");
         return -2;
     }
+	//通过以上预处理部分，进入到数据处理部分
     ret=postpos(ts,te,tint,0.0,&prcopt,&solopt,&filopt,infile,n,outfile,"","");
     
     if (!ret) fprintf(stderr,"%40s\r","");

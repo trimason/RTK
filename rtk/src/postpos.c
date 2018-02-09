@@ -695,7 +695,7 @@ static int readobsnav(gtime_t ts, gtime_t te, double ti, char **infile,
         return 0;
     }
     /* sort observation data */
-    nepoch=sortobs(obs);
+    nepoch=sortobs(obs);             /* number of observation epochs */
     
     /* delete duplicated ephemeris */
     uniqnav(nav);
@@ -932,7 +932,7 @@ static void setpcv(gtime_t time, prcopt_t *popt, nav_t *nav, const pcvs_t *pcvs,
         }
         strcpy(popt->anttype[i],pcv->type);
         popt->pcvr[i]=*pcv;
-    }
+	}
 }
 /* read ocean tide loading parameters ----------------------------------------*/
 static void readotl(prcopt_t *popt, const char *file, const sta_t *sta)
@@ -1021,8 +1021,8 @@ static int execses(gtime_t ts, gtime_t te, double ti, const prcopt_t *popt,
         reppath(fopt->dcb,path,ts,"","");
         readdcb(path,&navs,stas);
     }
-    /* set antenna paramters */
-    if (popt_.mode!=PMODE_SINGLE) {
+    /* set antenna paramters */              
+    if (popt_.mode!=PMODE_SINGLE) {              //mode在main函数最开始设置为kinect模式，数值为2  
         setpcv(obss.n>0?obss.data[0].time:timeget(),&popt_,&navs,&pcvss,&pcvsr,
                stas);
     }
@@ -1257,37 +1257,52 @@ extern int postpos(gtime_t ts, gtime_t te, double ti, double tu,
                    const filopt_t *fopt, char **infile, int n, char *outfile,
                    const char *rov, const char *base)
 {
+	/*gtime_t结构体中有两个成员变量，一个是time_t结构，一个是double类型的sec
+	  time_t是标准的秒的表示，但秒的表示为整数，没有小数点后的浮点数表示
+	  double类型的sec表示的是小数点后的秒*/
     gtime_t tts,tte,ttte;
     double tunit,tss;
     int i,j,k,nf,stat=0,week,flag=1,index[MAXINFILE]={0};
     char *ifile[MAXINFILE],ofile[1024],*ext;
     
     trace(3,"postpos : ti=%.0f tu=%.0f n=%d outfile=%s\n",ti,tu,n,outfile);
-    
+
+
+
+
     /* open processing session */
     if (!openses(popt,sopt,fopt,&navs,&pcvss,&pcvsr)) return -1;
     
-    if (ts.time!=0&&te.time!=0&&tu>=0.0) {
-        if (timediff(te,ts)<0.0) {
+    if (ts.time!=0&&te.time!=0&&tu>=0.0) {//当起始时间、终止时间和单元时间都已经有初值不为零时
+        //判断终止时间te是否大于起始时间ts
+		if (timediff(te,ts)<0.0) {
             showmsg("error : no period");
             closeses(&navs,&pcvss,&pcvsr);
             return 0;
         }
-        for (i=0;i<MAXINFILE;i++) {
+		//判断是否给文件分配足够的内存空间
+		for (i=0;i<MAXINFILE;i++) {
             if (!(ifile[i]=(char *)malloc(1024))) {
                 for (;i>=0;i--) free(ifile[i]);
                 closeses(&navs,&pcvss,&pcvsr);
                 return -1;
             }
         }
+		/*
+		  判断测试单元持续时长是否为0天或者大于最大持续测量天数100天（MAXPRCDAYS），如果是0天或者大于100天，那么强制设置为100天×24小时×3600秒
+		  在此基础上，如果单元时长小于1天（86400秒），那么tunit设置为该单元时间长度，否则tunit设置为一天86400秒
+		  将time2gpst函数得到测试起始时间的周内秒，根据设置好的tunit，将周内秒时长按照tunit步长分成一个个整数端，多余不足tunit时间段舍弃
+		  整数段构成的新的周内秒记为tss
+		*/
         if (tu==0.0||tu>86400.0*MAXPRCDAYS) tu=86400.0*MAXPRCDAYS;
-        settspan(ts,te);
+        settspan(ts,te);//好像是空语句
         tunit=tu<86400.0?tu:86400.0;
         tss=tunit*(int)floor(time2gpst(ts,&week)/tunit);
         
         for (i=0;;i++) { /* for each periods */
             tts=gpst2time(week,tss+i*tu);
-            tte=timeadd(tts,tu-DTTOL);
+            tte=timeadd(tts,tu-DTTOL);//DTTOL时间差的公差0.025s
+			//以下三个步骤可以认为是将ts和tts对齐，并且只要tte小于或等于te就可以
             if (timediff(tts,te)>0.0) break;
             if (timediff(tts,ts)<0.0) tts=ts;
             if (timediff(tte,te)>0.0) tte=te;

@@ -2635,7 +2635,7 @@ extern void uniqnav(nav_t *nav)
 static int cmpobs(const void *p1, const void *p2)
 {
     obsd_t *q1=(obsd_t *)p1,*q2=(obsd_t *)p2;
-    double tt=timediff(q1->time,q2->time);
+    double tt=timediff(q1->time,q2->time); //tt为q1减q2的时间差值，以秒为单位
     if (fabs(tt)>DTTOL) return tt<0?-1:1;
     if (q1->rcv!=q2->rcv) return (int)q1->rcv-(int)q2->rcv;
     return (int)q1->sat-(int)q2->sat;
@@ -2653,7 +2653,7 @@ extern int sortobs(obs_t *obs)
     
     if (obs->n<=0) return 0;
     
-    qsort(obs->data,obs->n,sizeof(obsd_t),cmpobs);
+    qsort(obs->data,obs->n,sizeof(obsd_t),cmpobs);//按照obsd_t中记录的时间顺序进行排序，从小到大
     
     /* delete duplicated data */
     for (i=j=0;i<obs->n;i++) {
@@ -2664,10 +2664,11 @@ extern int sortobs(obs_t *obs)
         }
     }
     obs->n=j+1;
-    
+    //反馈参数n，在整个时间段内，从头开始，按照前后时间点的时间差在DTTOL之内的条件，整个观测数据按时间被分成n段
+	//认为DTTOL指的是，在这个时间范围内观测到的数据，认为是接收机同一时间内观测到的所有卫星数据，可认为是一个时刻下的数据
     for (i=n=0;i<obs->n;i=j,n++) {
         for (j=i+1;j<obs->n;j++) {
-            if (timediff(obs->data[j].time,obs->data[i].time)>DTTOL) break;
+            if (timediff(obs->data[j].time,obs->data[i].time)>DTTOL) break;   //两个时间相差DTTOL之内，认为是同一观测时刻
         }
     }
     return n;
