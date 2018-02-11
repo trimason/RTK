@@ -1044,6 +1044,7 @@ static int execses(gtime_t ts, gtime_t te, double ti, const prcopt_t *popt,
         }
     }
     /* open solution statistics */
+	//打开结果状态文件，该文件是最开始自己定义的名字，现在要打开这个文件，并书写结果信息
     if (flag&&sopt->sstat>0) {
         strcpy(statfile,outfile);
         strcat(statfile,".stat");
